@@ -11,24 +11,26 @@ var Bitly = new BitlyAPI({
 	client_id: "cmshiyas",
 	client_secret: access_token	
 });
-
-
-// Bitly.authenticate('cmshiyas', 'Wipro@123', function(err, access_token) {
-// 	// Returns an error if there was one, or an access_token if there wasn't 
-// });
-
-Bitly.setAccessToken('Y21zaGl5YXM6Ul81MDI2ZDkwYWVhZWM0ODY3YjBkMmVlMGNiNzEyZGNmNQ');
+//set access token
+Bitly.setAccessToken('554342b774fff94edd696108a127f8ca88618928');
 
 
 
-Bitly.shorten({longUrl:"https://github.com/nkirby/node-bitlyapi"}, function(err, results) {
+var text = "Find me at http://www.example.com and also at http://stackoverflow.com";
+var html = urlify(text);
+console.log(html);
+
+longUrlVal = "http://www.cmshiyas.com";
+
+// convert long url to short url 
+Bitly.shorten({longUrl: longUrlVal}, function(err, results) {
     // Do something with your new, shorter url...
     console.log(results);
 
 });
 
 
-
+//create server and bring up the application
 var server = http.createServer(function (req, res) {
     if (req.method.toLowerCase() == 'get') {
         displayForm(res);
@@ -38,6 +40,7 @@ var server = http.createServer(function (req, res) {
 
 });
 
+//this function is to display the html page when the page is accessed firt time - GET
 function displayForm(res) {
     fs.readFile('form.html', function (err, data) {
         res.writeHead(200, {
@@ -49,6 +52,17 @@ function displayForm(res) {
     });
 }
 
+//this function search for any occurence of url in a given text and replace it with short url
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '">' + url + '</a>';
+    })
+    // or alternatively
+    // return text.replace(urlRegex, '<a href="$1">$1</a>')
+}
+
+//this function is to display the html page on clicking submit button - POST
 function processAllFieldsOfTheForm(req, res) {
     var form = new formidable.IncomingForm();
 
